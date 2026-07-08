@@ -148,6 +148,22 @@
     font-weight:700;
     color:var(--text);
     margin:0 0 10px;
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+
+  .fixed-tag{
+    font-size:10.5px;
+    font-weight:600;
+    color:var(--text-dim);
+    background:var(--bg);
+    border:1px solid var(--line);
+    padding:2px 8px;
+    border-radius:20px;
+    margin-left:7px;
+    text-transform:none;
+    letter-spacing:0;
   }
 
   .preview-box{
@@ -164,6 +180,19 @@
     font-weight:700;
     color:var(--accent-2);
     word-break:break-all;
+  }
+
+  .from-fixed-box{
+    font-size:13.5px;
+    line-height:1.7;
+  }
+  .from-fixed-box .from-name{
+    font-weight:700;
+    color:var(--text);
+    margin-bottom:3px;
+  }
+  .from-fixed-box .from-line{
+    color:var(--text-dim);
   }
 
   /* item table */
@@ -367,15 +396,17 @@
       <h2 data-i18n="sec_from_to">From &amp; To</h2>
       <div class="two-col">
         <div class="subblock">
-          <h3 data-i18n="lbl_from_title">From (Penghantar)</h3>
-          <div class="field"><label data-i18n="lbl_company">Nama Syarikat <span class="req">*</span></label>
-            <input type="text" id="fromName" required></div>
-          <div class="field"><label data-i18n="lbl_address">Alamat</label>
-            <textarea id="fromAddress"></textarea></div>
-          <div class="field"><label data-i18n="lbl_attn">ATTN</label>
-            <input type="text" id="fromAttn"></div>
-          <div class="field"><label data-i18n="lbl_tel">Tel</label>
-            <input type="text" id="fromTel"></div>
+          <h3>
+            <span data-i18n="lbl_from_title">From (Penghantar)</span>
+            <span class="fixed-tag" data-i18n="lbl_fixed">(Tetap)</span>
+          </h3>
+          <!-- From dikunci — JingDong Logistics sentiasa jadi penghantar tetap, tak boleh diubah dalam form -->
+          <div class="preview-box from-fixed-box">
+            <div class="from-name">JingDong Logistics</div>
+            <div class="from-line">2, Metrohub 2 - Warehouse 2, 1st Floor, Lot 109363, Persiaran Bukit Raja Kayangan/KU5, Bandar Bukit Raja, 41050 Klang, Selangor</div>
+            <div class="from-line"><span data-i18n="lbl_attn">ATTN</span>: Prema Mahalingam</div>
+            <div class="from-line"><span data-i18n="lbl_tel">Tel</span>: 6012-396 1012</div>
+          </div>
         </div>
         <div class="subblock">
           <h3 data-i18n="lbl_to_title">To (Penerima)</h3>
@@ -438,12 +469,22 @@
 // =====================================================================
 // TUKAR URL NI lepas deploy Apps Script sebagai Web App
 // =====================================================================
-const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxhPYd_Xe7eU9vhYsHiJj88oCoKABVXHtz4Q5jQiIZf85_sAQ3FG-PAvWvBFGZprVODhw/exec';
+const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzF542gRbhDUlebqptJcCFGj3Nm4ZeiARJz1tKwXc4aZnjoqKElNxXmGlidrCGSlgRu3Q/exec';
 
 const UNIT_OPTIONS = ['PCS','UNIT','SET','BOX','PALLET','KG'];
 let itemCount = 0;
 let currentLang = 'ms';
 let currentTheme = 'light';
+
+// ---------------- FIXED SENDER (From) ----------------
+// From sentiasa JingDong Logistics — tak boleh diubah dalam form.
+// Kalau nak tukar sender tetap ni suatu hari nanti, edit terus kat sini.
+const FIXED_FROM = {
+  name: 'JingDong Logistics',
+  address: '2, Metrohub 2 - Warehouse 2, 1st Floor, Lot 109363, Persiaran Bukit Raja Kayangan/KU5, Bandar Bukit Raja, 41050 Klang, Selangor',
+  attn: 'Prema Mahalingam',
+  tel: '6012-396 1012'
+};
 
 // ---------------- TRANSLATIONS ----------------
 const I18N = {
@@ -459,6 +500,7 @@ const I18N = {
     lbl_apac: 'APAC Ticket',
     lbl_date: 'Tarikh',
     lbl_from_title: 'From (Penghantar)',
+    lbl_fixed: '(Tetap)',
     lbl_to_title: 'To (Penerima)',
     lbl_company: 'Nama Syarikat',
     lbl_address: 'Alamat',
@@ -506,6 +548,7 @@ const I18N = {
     lbl_apac: 'APAC Ticket',
     lbl_date: 'Date',
     lbl_from_title: 'From (Sender)',
+    lbl_fixed: '(Fixed)',
     lbl_to_title: 'To (Recipient)',
     lbl_company: 'Company Name',
     lbl_address: 'Address',
@@ -737,10 +780,10 @@ document.getElementById('doForm').addEventListener('submit', async (e) => {
     noMA: document.getElementById('noMA').value.trim(),
     date: document.getElementById('date').value,
     apacTicket: document.getElementById('apacTicket').value.trim(),
-    fromName: document.getElementById('fromName').value.trim(),
-    fromAddress: document.getElementById('fromAddress').value.trim(),
-    fromAttn: document.getElementById('fromAttn').value.trim(),
-    fromTel: document.getElementById('fromTel').value.trim(),
+    fromName: FIXED_FROM.name,
+    fromAddress: FIXED_FROM.address,
+    fromAttn: FIXED_FROM.attn,
+    fromTel: FIXED_FROM.tel,
     toName: document.getElementById('toName').value.trim(),
     toAddress: document.getElementById('toAddress').value.trim(),
     toAttn: document.getElementById('toAttn').value.trim(),
